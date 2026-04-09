@@ -75,7 +75,7 @@ for season in seasons:
     if (file_exists(f'season_{season["year"]}.json')):
         print(f"Season {season['name']} already processed, skipping...")
         continue
-    print(f"Processing season {season['name']}...")
+    print(f"Processing season {season['year']}...")
     rounds = get_rounds(ID_BRASILEIRAO_SERIE_A, season['id'])
     for round in rounds:
         print(f"Processing round {round['round']}...")
