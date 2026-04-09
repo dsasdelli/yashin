@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.common.exceptions import TimeoutException
 from chromedriver_py import binary_path
 from selenium.webdriver.support.wait import WebDriverWait 
+from pathlib import Path
 
 ID_BRASILEIRAO_SERIE_A = 325
 
@@ -32,6 +33,9 @@ def get_json_page(url):
     except TimeoutException:
         print("Timed out waiting for page to load")
         return None
+    
+def file_exists(filename):
+    return Path(filename).is_file()
     
 def dump_json(filename, data):
     with open(filename, 'w', encoding='utf-8') as f:
@@ -65,11 +69,16 @@ def del_keys(d, *keys):
 
 driver = create_driver()
 
-events = []
 seasons = get_seasons(ID_BRASILEIRAO_SERIE_A)
 for season in seasons:
+    events = []
+    if (file_exists(f'season_{season["year"]}.json')):
+        print(f"Season {season['name']} already processed, skipping...")
+        continue
+    print(f"Processing season {season['name']}...")
     rounds = get_rounds(ID_BRASILEIRAO_SERIE_A, season['id'])
     for round in rounds:
+        print(f"Processing round {round['round']}...")
         for event in get_events(ID_BRASILEIRAO_SERIE_A, season['id'], round['round']):
             event_details = get_event_details(event['id'])
             if (event_details['status']['type'] != 'finished'):
@@ -78,7 +87,7 @@ for season in seasons:
             event_lineups = get_event_lineups(event['id'])
             event_pregame_form = get_event_pregame_form(event['id'])
             events.append({**event_details, **event_statistics, 'lineups': event_lineups, 'pregame_form': event_pregame_form})
-    break
 
-dump_json('events.json', events)
+    dump_json(f'season_{season["year"]}.json', events)
+
 driver.quit()
