@@ -1,3 +1,4 @@
+import argparse
 import json
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -7,11 +8,13 @@ from selenium.webdriver.support import expected_conditions
 from selenium.common.exceptions import TimeoutException
 from chromedriver_py import binary_path
 from selenium.webdriver.support.wait import WebDriverWait 
-from pathlib import Path
+from util import create_dir, file_exists, dump_json
 
 ID_BRASILEIRAO_SERIE_A = 325
 
 URL = f"https://www.sofascore.com/pt/football/tournament/brazil/brasileirao-serie-a/{ID_BRASILEIRAO_SERIE_A}"
+
+ANOS = range(2001, 2026)
 
 def create_driver():
     options = Options()
@@ -33,13 +36,6 @@ def get_json_page(url):
     except TimeoutException:
         print("Timed out waiting for page to load")
         return None
-    
-def file_exists(filename):
-    return Path(filename).is_file()
-    
-def dump_json(filename, data):
-    with open(filename, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
 
 def get_seasons(tournament_id):
     return get_json_page(f"https://www.sofascore.com/api/v1/unique-tournament/{tournament_id}/seasons")['seasons']
@@ -67,13 +63,25 @@ def del_keys(d, *keys):
         if key in d:
             del d[key]
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--anoInicio', type=int, help='Ano de início', choices=ANOS, required=False, default=2016)
+parser.add_argument('-f', '--anoFim', type=int, help='Ano de fim', choices=ANOS, required=False, default=2025)
+parser.add_argument('-o', '--outputDir', help='output directory', default='seasons', required=True)
+
+args = parser.parse_args()
+
 driver = create_driver()
+
+create_dir(args.outputDir)
 
 seasons = get_seasons(ID_BRASILEIRAO_SERIE_A)
 for season in seasons:
     events = []
     if (file_exists(f'season_{season["year"]}.json')):
-        print(f"Season {season['name']} already processed, skipping...")
+        print(f"Season {season['year']} already processed, skipping...")
+        continue
+    if (season['year'] < args.anoInicio or season['year'] > args.anoFim):
+        print(f"Season {season['year']} is out of range, skipping...")
         continue
     print(f"Processing season {season['year']}...")
     rounds = get_rounds(ID_BRASILEIRAO_SERIE_A, season['id'])
@@ -88,6 +96,6 @@ for season in seasons:
             event_pregame_form = get_event_pregame_form(event['id'])
             events.append({**event_details, **event_statistics, 'lineups': event_lineups, 'pregame_form': event_pregame_form})
 
-    dump_json(f'season_{season["year"]}.json', events)
+    dump_json(args.outputDir, f'season_{season["year"]}.json', events)
 
 driver.quit()
