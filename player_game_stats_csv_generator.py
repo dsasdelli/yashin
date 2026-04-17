@@ -72,7 +72,7 @@ for file_path in dir_path.iterdir():
                 game_stat = {
                     **base_game_stat,
                     'seasonYear': game['season']['year'],
-                    'roundInfo': game['roundInfo'],
+                    'round': game['roundInfo']['round'],
                     'statusType': game['status']['type'],
                     # Home team:
                     'homeTeamId': game['homeTeam']['id'],
@@ -101,7 +101,7 @@ for file_path in dir_path.iterdir():
 
 create_dir(args.outputDir)
 
-pd.DataFrame(game_stats).to_csv(Path(args.outputDir) / 'game_stats.csv', index=False)
+pd.DataFrame(game_stats).to_csv(Path(args.outputDir) / 'games_stats.csv', index=False)
 pd.DataFrame(players_games_stats).to_csv(Path(args.outputDir) / 'players_games_stats.csv', index=False)
 
                 
