@@ -74,6 +74,9 @@ for file_path in dir_path.iterdir():
                     'seasonYear': game['season']['year'],
                     'round': game['roundInfo']['round'],
                     'statusType': game['status']['type'],
+                    # Has statistics:
+                    'hasPlayerStatistics': _players_games_stats is not None,
+                    'hasGameStatistics': _game_stats is not None,
                     # Home team:
                     'homeTeamId': game['homeTeam']['id'],
                     'homeTeamName': game['homeTeam']['name'],
