@@ -11,8 +11,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 from util import create_dir, file_exists, dump_json
 
 ID_BRASILEIRAO_SERIE_A = 325
+ID_COPA_DO_BRASIL = 325
 
-URL = f"https://www.sofascore.com/pt/football/tournament/brazil/brasileirao-serie-a/{ID_BRASILEIRAO_SERIE_A}"
+URL_BRASILEIRAO_SERIE_A = f"https://www.sofascore.com/pt/football/tournament/brazil/brasileirao-serie-a/{ID_BRASILEIRAO_SERIE_A}"
 
 ANOS = range(2001, 2026)
 

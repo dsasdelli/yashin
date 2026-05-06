@@ -4,7 +4,7 @@ import json
 import pandas as pd
 from util import create_dir
 
-def genStatisticalItems(game, period, groupName) -> None | list:
+def gen_statistical_items(game, period, groupName) -> None | list:
     _game_statistics = dict() 
     if 'statistics' not in game:
         return None
@@ -13,7 +13,7 @@ def genStatisticalItems(game, period, groupName) -> None | list:
         _game_statistics[f'away{si["key"].capitalize()}'] = si['awayValue']
     return _game_statistics
 
-def getPlayerGameStats(game) -> None | list:
+def get_player_games_stats(game) -> None | list:
     _players_games_stats = []
     for side in ['home', 'away']:
         if 'home' not in game['lineups'] or 'away' not in game['lineups']:
@@ -30,9 +30,12 @@ def getPlayerGameStats(game) -> None | list:
                     'teamId': player['teamId'],
                     'position': player['position'],
                     'substitute': player['substitute'],
-                    **{key:value for (key, value) in player['statistics'].items() if key != 'statisticsType'},
-                    'side': side
+                    'side': side,
+                    **{key:value for (key, value) in player['statistics'].items() if key != 'statisticsType' and key != 'ratingVersions'}
                 }
+                if ('ratingVersions' in player['statistics']):
+                    player_stat['ratingOriginal'] = player['statistics']['ratingVersions']['original']
+                    player_stat['ratingAlternative'] = player['statistics']['ratingVersions']['original']
                 _players_games_stats.append({**player_stat})
     return _players_games_stats
 
@@ -60,13 +63,13 @@ for file_path in dir_path.iterdir():
                     'gameId': game['id'],
                     'startTimestamp': game['startTimestamp']
                 }
-                _players_games_stats = getPlayerGameStats(game)
-                _game_stats = genStatisticalItems(game, 'ALL', 'Match overview')
+                _players_games_stats = get_player_games_stats(game)
+                _game_stats = gen_statistical_items(game, 'ALL', 'Match overview')
                 if not _game_stats:
                     print(f"Warning: Game {game['id']} does not have statistics, skipping...")
                     continue
                 if _players_games_stats:
-                    players_games_stats.extend([{**_p, **base_game_stat} for _p in _players_games_stats])
+                    players_games_stats.extend([{**base_game_stat, **_p} for _p in _players_games_stats])
                 else:
                     continue
                 game_stat = {
