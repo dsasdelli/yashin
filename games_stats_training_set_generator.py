@@ -21,8 +21,8 @@ all_games_df_list = []
 for i, _game_df in games_stats_with_statistics_df.iterrows():
     if (i % 10 == 0):
         print(f"Processando jogo {i}/{len(games_stats_with_statistics_df)}")
-    last_n_games_home_df = get_team_last_n_games_or_none(games_stats_df, _game_df['homeTeamId'], args.lastNGames)
-    last_n_games_away_df = get_team_last_n_games_or_none(games_stats_df, _game_df['awayTeamId'], args.lastNGames)
+    last_n_games_home_df = get_team_last_n_games_or_none(games_stats_df, _game_df['homeTeamId'], args.lastNGames, _game_df['startTimestamp'])
+    last_n_games_away_df = get_team_last_n_games_or_none(games_stats_df, _game_df['awayTeamId'], args.lastNGames, _game_df['startTimestamp'])
     if (last_n_games_home_df is not None and last_n_games_away_df is not None):
         last_n_games_home_df = last_n_games_home_df.add_suffix('_home_x')
         last_n_games_away_df = last_n_games_away_df.add_suffix('_away_x')

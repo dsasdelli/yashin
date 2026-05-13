@@ -2,16 +2,19 @@ import pandas as pd
 
 def get_team_last_n_games(games_stats_df, team_id, last_n=5, start_timestamp=None):
     if start_timestamp is not None:
-        games_stats_df = games_stats_df[games_stats_df['startTimestamp'] < start_timestamp]
-    last_n_games_stats_df = games_stats_df[(games_stats_df['homeTeamId'] == team_id) | (games_stats_df['awayTeamId'] == team_id)]
+        last_n_games_stats_df = games_stats_df[games_stats_df['startTimestamp'] < start_timestamp]
+    last_n_games_stats_df = last_n_games_stats_df[(last_n_games_stats_df['homeTeamId'] == team_id) | (last_n_games_stats_df['awayTeamId'] == team_id)]
     last_n_games_stats_df = last_n_games_stats_df.sort_values(by='startTimestamp', ascending=False).head(last_n)
+    if (len(last_n_games_stats_df) != last_n):
+        return None
     last_n_games_stats_df.loc[(last_n_games_stats_df['homeTeamId'] == team_id), 'side'] = 'home'
     last_n_games_stats_df.loc[(last_n_games_stats_df['awayTeamId'] == team_id), 'side'] = 'away'
     return last_n_games_stats_df
 
 def get_team_last_n_games_or_none(games_stats_df, team_id, last_n=5, start_timestamp=None, stack=True):
-    last_n_games_stats_df = get_team_last_n_games(games_stats_df, team_id, last_n, start_timestamp).reset_index(drop=True)
-    if (last_n_games_stats_df is not None and len(last_n_games_stats_df) == last_n):
+    last_n_games_stats_df = get_team_last_n_games(games_stats_df, team_id, last_n, start_timestamp)
+    if (last_n_games_stats_df is not None):
+        last_n_games_stats_df = last_n_games_stats_df.reset_index(drop=True)
         if (stack):
             last_n_games_stats_df.index = last_n_games_stats_df.index + 1
             last_n_games_stats_df = last_n_games_stats_df.stack()
@@ -21,11 +24,11 @@ def get_team_last_n_games_or_none(games_stats_df, team_id, last_n=5, start_times
     return None
 
 def get_player_last_n_games(player_games_stats_df, player_id, last_n=5, start_timestamp=None, substitute=False):
-    player_games_stats_df = player_games_stats_df[player_games_stats_df['playerId'] == player_id]
-    player_games_stats_df = player_games_stats_df.sort_values(by='startTimestamp', ascending=False)
+    player_last_n_games_stats_df = player_games_stats_df[player_games_stats_df['playerId'] == player_id]
+    player_last_n_games_stats_df = player_last_n_games_stats_df.sort_values(by='startTimestamp', ascending=False)
     if start_timestamp is not None:
-        player_games_stats_df = player_games_stats_df[(player_games_stats_df['startTimestamp'] < start_timestamp) & (player_games_stats_df['substitute'] == substitute)]
-    return player_games_stats_df.head(last_n)
+        player_last_n_games_stats_df = player_last_n_games_stats_df[(player_last_n_games_stats_df['startTimestamp'] < start_timestamp) & (player_last_n_games_stats_df['substitute'] == substitute)]
+    return player_last_n_games_stats_df.head(last_n)
 
 def get_players_last_n_games_or_none(players_games_stats_df, starting_players_ids, last_n, start_timestamp, stack=True, substitute=False):
     players_last_n_games_df_list = []
