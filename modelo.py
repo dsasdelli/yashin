@@ -18,6 +18,16 @@ COMPETICOES = {
         "ID": 480,
         "Nome": "Conmebol Sudamericana",
         "URL": "https://www.sofascore.com/pt/football/tournament/south-america/conmebol-sudamericana/480"
+    },
+    "SPA": {
+        "ID": 372,
+        "Nome": "Paulista Série A1",
+        "URL": "https://www.sofascore.com/pt/football/tournament/brazil/paulista-serie-a1/372"
+    },
+    "RJA": {
+        "ID": 92,
+        "Nome": "Carioca",
+        "URL": "https://www.sofascore.com/pt/football/tournament/brazil/carioca/92"
     }
 }
 

@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-p', '--inputFilePlayersGamesStats', help='input file players-games', default='games-players-processed/players_games_stats.csv')
 parser.add_argument('-g', '--inputFileGamesStats', help='input file games', default='games-players-processed/games_stats.csv')
 parser.add_argument('-o', '--outputDir', help='output directory', default='games-players-processed')
-parser.add_argument('-l', '--lastNGames', type=int, help='last n games to consider', default=5)
+parser.add_argument('-l', '--lastNGames', type=int, help='last n games to consider (must be even)', default=6)
 
 args = parser.parse_args()
 
@@ -21,8 +21,8 @@ all_games_df_list = []
 for i, _game_df in games_stats_with_statistics_df.iterrows():
     if (i % 10 == 0):
         print(f"Processando jogo {i}/{len(games_stats_with_statistics_df)}")
-    last_n_games_home_df = get_team_last_n_games_or_none(games_stats_df, _game_df['homeTeamId'], args.lastNGames, _game_df['startTimestamp'])
-    last_n_games_away_df = get_team_last_n_games_or_none(games_stats_df, _game_df['awayTeamId'], args.lastNGames, _game_df['startTimestamp'])
+    last_n_games_home_df = get_team_last_n_games_or_none(games_stats_df, _game_df['homeTeamId'], args.lastNGames//2, _game_df['startTimestamp'])
+    last_n_games_away_df = get_team_last_n_games_or_none(games_stats_df, _game_df['awayTeamId'], args.lastNGames//2, _game_df['startTimestamp'])
     if (last_n_games_home_df is not None and last_n_games_away_df is not None):
         last_n_games_home_df = last_n_games_home_df.add_suffix('_home_x')
         last_n_games_away_df = last_n_games_away_df.add_suffix('_away_x')

@@ -1,25 +1,38 @@
 import pandas as pd
 
-def get_team_last_n_games(games_stats_df, team_id, last_n=5, start_timestamp=None):
+def get_team_last_n_games_by_side(games_stats_df, team_id, side='home', last_n=3, start_timestamp=None):
     if start_timestamp is not None:
         last_n_games_stats_df = games_stats_df[games_stats_df['startTimestamp'] < start_timestamp]
-    last_n_games_stats_df = last_n_games_stats_df[(last_n_games_stats_df['homeTeamId'] == team_id) | (last_n_games_stats_df['awayTeamId'] == team_id)]
+    side_column = 'homeTeamId' if side == 'home' else 'awayTeamId'
+    last_n_games_stats_df = last_n_games_stats_df[last_n_games_stats_df[side_column] == team_id]
     last_n_games_stats_df = last_n_games_stats_df.sort_values(by='startTimestamp', ascending=False).head(last_n)
     if (len(last_n_games_stats_df) != last_n):
         return None
-    last_n_games_stats_df.loc[(last_n_games_stats_df['homeTeamId'] == team_id), 'side'] = 'home'
-    last_n_games_stats_df.loc[(last_n_games_stats_df['awayTeamId'] == team_id), 'side'] = 'away'
     return last_n_games_stats_df
 
-def get_team_last_n_games_or_none(games_stats_df, team_id, last_n=5, start_timestamp=None, stack=True):
-    last_n_games_stats_df = get_team_last_n_games(games_stats_df, team_id, last_n, start_timestamp)
-    if (last_n_games_stats_df is not None):
-        last_n_games_stats_df = last_n_games_stats_df.reset_index(drop=True)
+def get_team_last_n_games_or_none(games_stats_df, team_id, last_n=3, start_timestamp=None, stack=True):
+    def stack(df) -> pd.DataFrame:
+        df.index = df.index + 1
+        df = df.stack()
+        df.index = df.index.map('{0[1]}_p{0[0]}'.format)
+        return df.to_frame().T
+    def stack2(df) -> pd.DataFrame:
+        single_row_df = df.stack().to_frame().T
+        single_row_df.columns = [f'{col}_{idx}' for idx, col in single_row_df.columns]
+        return single_row_df
+    def stack3(df) -> pd.DataFrame:
+        return pd.DataFrame(df.values.reshape(1, -1))
+
+    last_n_home_games_stats_df = get_team_last_n_games_by_side(games_stats_df, team_id, side='home', last_n=last_n, start_timestamp=start_timestamp)
+    last_n_away_games_stats_df = get_team_last_n_games_by_side(games_stats_df, team_id, side='away', last_n=last_n, start_timestamp=start_timestamp)
+    if (last_n_home_games_stats_df is not None and last_n_away_games_stats_df is not None):
+        last_n_home_games_stats_df = last_n_home_games_stats_df.reset_index(drop=True).add_suffix('_home')
         if (stack):
-            last_n_games_stats_df.index = last_n_games_stats_df.index + 1
-            last_n_games_stats_df = last_n_games_stats_df.stack()
-            last_n_games_stats_df.index = last_n_games_stats_df.index.map('{0[1]}_p{0[0]}'.format)
-            last_n_games_stats_df = last_n_games_stats_df.to_frame().T
+            last_n_home_games_stats_df = stack(last_n_home_games_stats_df)
+        last_n_away_games_stats_df = last_n_away_games_stats_df.reset_index(drop=True).add_suffix('_away')
+        if (stack):
+            last_n_away_games_stats_df = stack(last_n_away_games_stats_df)
+        last_n_games_stats_df = pd.concat([last_n_home_games_stats_df, last_n_away_games_stats_df], axis=1)
         return last_n_games_stats_df
     return None
 

@@ -22,7 +22,7 @@ def create_driver():
     service_object = Service(binary_path)
     return webdriver.Chrome(service=service_object, options=options)
 
-def get_json_page(url, wait_time=1):
+def get_json_page(url, wait_time=3):
     time.sleep(wait_time)
     driver.get(url)
     try:
@@ -65,7 +65,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--anoInicio', type=int, help='Ano de início', choices=ANOS, required=False, default=ANOS[0])
 parser.add_argument('-f', '--anoFim', type=int, help='Ano de fim', choices=ANOS, required=False, default=ANOS[-1])
 parser.add_argument('-o', '--outputDir', help='output directory', required=False, default='games-raw')
-parser.add_argument('-c', '--competicao', help='Competição', choices=['BRA', 'COP', 'LIB', 'SUL'], required=True)
+parser.add_argument('-c', '--competicao', help='Competição', choices=['BRA', 'COP', 'LIB', 'SUL', 'SPA', 'RJA'], required=True)
 
 args = parser.parse_args()
 
