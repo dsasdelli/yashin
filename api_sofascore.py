@@ -65,7 +65,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--anoInicio', type=int, help='Ano de início', choices=ANOS, required=False, default=ANOS[0])
 parser.add_argument('-f', '--anoFim', type=int, help='Ano de fim', choices=ANOS, required=False, default=ANOS[-1])
 parser.add_argument('-o', '--outputDir', help='output directory', required=False, default='games-raw')
-parser.add_argument('-c', '--competicao', help='Competição', choices=['BRA', 'COP', 'LIB', 'SUL', 'SPA', 'RJA'], required=True)
+parser.add_argument('-c', '--competicao', help='Competição', choices=list(COMPETICOES.keys()), required=True)
 
 args = parser.parse_args()
 

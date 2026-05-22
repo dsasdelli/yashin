@@ -28,6 +28,21 @@ COMPETICOES = {
         "ID": 92,
         "Nome": "Carioca",
         "URL": "https://www.sofascore.com/pt/football/tournament/brazil/carioca/92"
+    },
+    "MGA": {
+        "ID": 379,
+        "Nome": "Mineiro, Módulo I",
+        "URL": "https://www.sofascore.com/pt/football/tournament/brazil/mineiro-modulo-i/379"
+    },
+    "RSA": {
+        "ID": 377,
+        "Nome": "Gaúcho",
+        "URL": "https://www.sofascore.com/pt/football/tournament/brazil/gaucho/377"
+    },
+    "BAH": {
+        "ID": 374,
+        "Nome": "Baianão Mansão Green 2026",
+        "URL": "https://www.sofascore.com/pt/football/tournament/brazil/baiano/374"
     }
 }
 

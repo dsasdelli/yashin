@@ -8,9 +8,10 @@ def gen_statistical_items(game, period, groupName=None) -> None | list:
     _game_statistics = dict() 
     if 'statistics' not in game:
         return None
-    for si in [g for g in [p for p in game['statistics'] if p['period'] == period][0]['groups'] if groupName is None or g['groupName'] == groupName][0]['statisticsItems']:
-        _game_statistics[f'home{si["key"].capitalize()}'] = si['homeValue']
-        _game_statistics[f'away{si["key"].capitalize()}'] = si['awayValue']
+    for g in [g for g in [p for p in game['statistics'] if p['period'] == period][0]['groups'] if groupName is None or g['groupName'] == groupName]:
+        for si in g['statisticsItems']:
+            _game_statistics[f'home{si["key"].capitalize()}'] = si['homeValue']
+            _game_statistics[f'away{si["key"].capitalize()}'] = si['awayValue']
     return _game_statistics
 
 def get_player_games_stats(game) -> None | list:
@@ -105,7 +106,6 @@ for file_path in dir_path.iterdir():
                     **_game_stats
                 }
                 game_stats.append(game_stat)
-
 
 create_dir(args.outputDir)
 
