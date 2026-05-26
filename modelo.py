@@ -43,6 +43,26 @@ COMPETICOES = {
         "ID": 374,
         "Nome": "Baianão Mansão Green 2026",
         "URL": "https://www.sofascore.com/pt/football/tournament/brazil/baiano/374"
+    },
+    "PRA": {
+        "ID": 382,
+        "Nome": "Paranaense",
+        "URL": "https://www.sofascore.com/pt/football/tournament/brazil/paranaense/382"
+    },
+    "SCA": {
+        "ID": 376,
+        "Nome": "Catarinense",
+        "URL": "https://www.sofascore.com/pt/football/tournament/brazil/catarinense/376"
+    },
+    "PEA": {
+        "ID": 380,
+        "Nome": "Pernambucano",
+        "URL": "https://www.sofascore.com/pt/football/tournament/brazil/pernambucano/380"
+    },
+    "CEA": {
+        "ID": 378,
+        "Nome": "Cearense",
+        "URL": "https://www.sofascore.com/pt/football/tournament/brazil/cearense/378"
     }
 }
 

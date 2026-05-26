@@ -69,12 +69,15 @@ for file_path in dir_path.iterdir():
                 _players_games_stats = get_player_games_stats(game)
                 _game_stats = gen_statistical_items(game, 'ALL')
                 if not _game_stats:
-                    print(f"Warning: Game {game['id']} does not have statistics, skipping...")
+                    print(f"Warning: Game {game['id']} does not have game statistics, skipping...")
                     continue
-                if _players_games_stats:
-                    players_games_stats.extend([{**base_game_stat, **_p} for _p in _players_games_stats])
-                else:
+                if not _players_games_stats:
+                    print(f"Warning: Game {game['id']} does not have player statistics, skipping...")
                     continue
+                if 'homeScore' not in game or 'awayScore' not in game or 'normaltime' not in game['homeScore'] or 'normaltime' not in game['awayScore']:
+                    print(f"Warning: Game {game['id']} does not have score information, skipping...")
+                    continue
+                players_games_stats.extend([{**base_game_stat, **_p} for _p in _players_games_stats])
                 game_stat = {
                     **base_game_stat,
                     'seasonYear': game['season']['year'],
